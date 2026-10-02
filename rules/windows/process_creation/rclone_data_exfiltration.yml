@@ -1,0 +1,29 @@
+title: Rclone or Cloud Sync Tool Used for Bulk Transfer
+id: 3a8b2cf5-5851-5249-9b10-b38add1893a6
+status: experimental
+description: Detects rclone-style command lines used to copy data to external storage, common in double-extortion
+  intrusions.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.exfiltration
+- attack.t1567.002
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    Image|endswith:
+    - \rclone.exe
+    - \megacmd.exe
+  selection_cli:
+    CommandLine|contains:
+    - rclone copy
+    - rclone sync
+    - rclone move
+    - --transfers
+    - mega-put
+  condition: 1 of selection_*
+falsepositives:
+- Approved backup and migration jobs
+level: high

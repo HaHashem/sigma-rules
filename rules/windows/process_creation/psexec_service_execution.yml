@@ -1,0 +1,27 @@
+title: PsExec Service Execution
+id: 59ad411e-233b-5907-9f55-7f7a4a8712c5
+status: experimental
+description: Detects the PsExec service binary or its look-alikes starting on a host, and processes spawned
+  by it.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.lateral-movement
+- attack.t1021.002
+- attack.execution
+- attack.t1569.002
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    Image|endswith:
+    - \psexesvc.exe
+    - \paexec.exe
+    - \remcom.exe
+  selection_parent:
+    ParentImage|endswith: \psexesvc.exe
+  condition: 1 of selection_*
+falsepositives:
+- IT administration using PsExec
+level: medium

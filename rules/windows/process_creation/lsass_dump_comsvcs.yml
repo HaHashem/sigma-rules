@@ -1,0 +1,33 @@
+title: LSASS Memory Dump via Comsvcs or ProcDump
+id: 50b18f04-d382-568c-ac63-1262d9059a93
+status: experimental
+description: Detects common command lines used to dump LSASS memory to disk.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.credential-access
+- attack.t1003.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_comsvcs:
+    CommandLine|contains:
+    - comsvcs.dll, MiniDump
+    - comsvcs.dll,MiniDump
+    - 'comsvcs, #24'
+    - 'comsvcs.dll #24'
+    - comsvcs.dll,#24
+  selection_procdump:
+    CommandLine|contains|all:
+    - procdump
+    - lsass
+  selection_other:
+    CommandLine|contains:
+    - sekurlsa
+    - 'lsadump::'
+  condition: 1 of selection_*
+falsepositives:
+- Authorized penetration testing
+- Crash analysis by administrators
+level: high

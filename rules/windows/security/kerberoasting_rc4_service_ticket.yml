@@ -1,0 +1,25 @@
+title: Kerberos Service Ticket Requested With RC4 Encryption
+id: f58ca3a7-fa15-524f-979c-4a33081e4c63
+status: experimental
+description: Detects service ticket requests (4769) using RC4, which is common in Kerberoasting. Needs
+  tuning where legacy systems still use RC4.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.credential-access
+- attack.t1558.003
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4769
+    TicketEncryptionType: '0x17'
+  filter_machine:
+    ServiceName|endswith: $
+  filter_krbtgt:
+    ServiceName: krbtgt
+  condition: selection and not 1 of filter_*
+falsepositives:
+- Legacy applications that only support RC4
+level: medium

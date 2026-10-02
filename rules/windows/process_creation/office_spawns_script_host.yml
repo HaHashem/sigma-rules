@@ -1,0 +1,37 @@
+title: Office Application Spawns Scripting Host or Shell
+id: 2e803681-fb78-5088-a478-f63b49a18390
+status: experimental
+description: Detects Microsoft Office applications starting script interpreters or shells, typical of
+  macro-based phishing.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.initial-access
+- attack.t1566.001
+- attack.execution
+- attack.t1204.002
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith:
+    - \winword.exe
+    - \excel.exe
+    - \powerpnt.exe
+    - \outlook.exe
+    - \msaccess.exe
+  selection_child:
+    Image|endswith:
+    - \powershell.exe
+    - \pwsh.exe
+    - \cmd.exe
+    - \wscript.exe
+    - \cscript.exe
+    - \mshta.exe
+    - \rundll32.exe
+    - \regsvr32.exe
+  condition: selection_parent and selection_child
+falsepositives:
+- Legitimate add-ins and macros that call scripts
+level: high

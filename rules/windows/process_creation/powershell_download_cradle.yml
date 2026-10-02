@@ -1,0 +1,36 @@
+title: PowerShell Download Cradle
+id: 9f01f92e-df12-590c-9822-02194de811a0
+status: experimental
+description: Detects PowerShell command lines that download content from the web, common for malware loaders
+  and ClickFix chains.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.execution
+- attack.t1059.001
+- attack.command-and-control
+- attack.t1105
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    Image|endswith:
+    - \powershell.exe
+    - \pwsh.exe
+  selection_cli:
+    CommandLine|contains:
+    - DownloadString
+    - DownloadFile
+    - DownloadData
+    - Invoke-WebRequest
+    - Invoke-RestMethod
+    - Net.WebClient
+    - Start-BitsTransfer
+    - ' iwr '
+    - ' irm '
+  condition: selection_img and selection_cli
+falsepositives:
+- Software deployment and admin scripts
+- Monitoring agents
+level: medium

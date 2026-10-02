@@ -1,0 +1,34 @@
+title: Scheduled Task Created With Suspicious Command or Path
+id: 66779e7a-42fa-578c-8129-303e9720234b
+status: experimental
+description: Detects scheduled task creation that runs scripting hosts or binaries from user-writable
+  paths.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.persistence
+- attack.execution
+- attack.t1053.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    Image|endswith: \schtasks.exe
+    CommandLine|contains: /create
+  selection_cmd:
+    CommandLine|contains:
+    - powershell
+    - mshta
+    - wscript
+    - cscript
+    - cmd /c
+    - \AppData\
+    - \Temp\
+    - \Users\Public\
+    - \ProgramData\
+    - http
+  condition: selection_img and selection_cmd
+falsepositives:
+- Software installers and updaters
+level: medium

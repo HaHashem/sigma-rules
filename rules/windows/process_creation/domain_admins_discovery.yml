@@ -1,0 +1,33 @@
+title: Privileged Group Discovery via Net or Nltest
+id: 1182fa53-d1f3-5630-b669-0174516437e8
+status: experimental
+description: Detects enumeration of privileged domain groups or domain trusts, typical hands-on-keyboard
+  discovery.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.discovery
+- attack.t1069.002
+- attack.t1482
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_net:
+    Image|endswith:
+    - \net.exe
+    - \net1.exe
+    CommandLine|contains:
+    - domain admins
+    - enterprise admins
+    - group /domain
+    - localgroup administrators
+  selection_nltest:
+    Image|endswith: \nltest.exe
+    CommandLine|contains:
+    - dclist
+    - domain_trusts
+  condition: 1 of selection_*
+falsepositives:
+- Administrators and inventory scripts
+level: low

@@ -1,0 +1,26 @@
+title: DCSync Replication Rights Used by a Non-Computer Account
+id: 7f018fee-6e67-56f3-be3b-c543ac707172
+status: experimental
+description: Detects directory replication access (Event 4662) by an account that is not a domain controller
+  computer account.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.credential-access
+- attack.t1003.006
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4662
+    Properties|contains:
+    - 1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+    - 1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
+    - 89e95b76-444d-4c62-991a-0facbeda640c
+  filter_dc:
+    SubjectUserName|endswith: $
+  condition: selection and not filter_dc
+falsepositives:
+- Azure AD Connect and other directory sync accounts
+level: high

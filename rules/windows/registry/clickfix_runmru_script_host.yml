@@ -1,0 +1,30 @@
+title: 'ClickFix Pattern: RunMRU Entry With Scripting Host or URL'
+id: 389b01a4-eee7-59b2-9776-eb2086069b15
+status: experimental
+description: Detects Run dialog history (RunMRU) entries containing a scripting host or URL, which remain
+  after a user pastes a malicious command into Win+R.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.execution
+- attack.t1204.004
+logsource:
+  category: registry_set
+  product: windows
+detection:
+  selection_key:
+    TargetObject|contains: \Explorer\RunMRU
+  selection_val:
+    Details|contains:
+    - powershell
+    - mshta
+    - http://
+    - https://
+    - cmd /c
+    - cmd.exe /c
+    - -enc
+    - iex
+  condition: selection_key and selection_val
+falsepositives:
+- Users who type legitimate commands containing these strings
+level: high

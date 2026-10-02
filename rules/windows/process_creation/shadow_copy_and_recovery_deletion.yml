@@ -1,0 +1,41 @@
+title: Shadow Copy and Recovery Deletion
+id: c1caa134-a9c2-5f49-8183-00e6b68e2c08
+status: experimental
+description: Detects commands that delete volume shadow copies or disable recovery, a common step before
+  ransomware encryption.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.impact
+- attack.t1490
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_vss:
+    CommandLine|contains|all:
+    - vssadmin
+    - delete
+    - shadows
+  selection_resize:
+    CommandLine|contains|all:
+    - vssadmin
+    - resize
+    - shadowstorage
+  selection_wmic:
+    CommandLine|contains|all:
+    - shadowcopy
+    - delete
+  selection_bcd:
+    CommandLine|contains:
+    - recoveryenabled no
+    - ignoreallfailures
+  selection_wbadmin:
+    CommandLine|contains|all:
+    - wbadmin
+    - delete
+  condition: 1 of selection_*
+falsepositives:
+- Backup software maintenance
+- Administrators freeing disk space
+level: high

@@ -1,0 +1,25 @@
+title: NTDS.dit Extraction via Ntdsutil or Shadow Copy
+id: 407abcd6-e0ce-5d27-8ffc-e4861efca761
+status: experimental
+description: Detects Active Directory database extraction using ntdsutil install-from-media, snapshots
+  or direct references to ntds.dit.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.credential-access
+- attack.t1003.003
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_ntdsutil:
+    Image|endswith: \ntdsutil.exe
+    CommandLine|contains:
+    - ifm
+    - snapshot
+  selection_file:
+    CommandLine|contains: ntds.dit
+  condition: 1 of selection_*
+falsepositives:
+- Domain controller backup or IFM media creation by administrators
+level: high

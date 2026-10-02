@@ -1,0 +1,31 @@
+title: New Service Installed With Suspicious Image Path
+id: d82d93d4-321c-57b4-bed7-6c871bf30fb9
+status: experimental
+description: Detects service installation events (7045) where the image path runs a shell or a binary
+  from a user-writable location.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.persistence
+- attack.t1543.003
+- attack.execution
+- attack.t1569.002
+logsource:
+  product: windows
+  service: system
+detection:
+  selection:
+    EventID: 7045
+  filter_paths:
+    ImagePath|contains:
+    - \Users\
+    - \Temp\
+    - \ProgramData\
+    - cmd.exe /c
+    - powershell
+    - '%COMSPEC%'
+    - \\127.0.0.1\
+  condition: selection and filter_paths
+falsepositives:
+- Software installers
+level: high

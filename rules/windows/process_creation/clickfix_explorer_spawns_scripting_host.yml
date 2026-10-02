@@ -1,0 +1,44 @@
+title: 'ClickFix Pattern: Explorer Spawns Scripting Host With Remote Content'
+id: f20994ba-08db-54c1-88df-f38f60e2e015
+status: experimental
+description: Detects explorer.exe starting a scripting host with a URL, hidden window or in-memory execution,
+  the pattern left when a user pastes a command into the Run dialog after a fake CAPTCHA.
+references:
+- https://hahashem.github.io/article.html?slug=dfir-clickfix-investigation
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.execution
+- attack.t1204.004
+- attack.t1059.001
+- attack.t1218.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith: \explorer.exe
+  selection_img:
+    Image|endswith:
+    - \powershell.exe
+    - \pwsh.exe
+    - \mshta.exe
+    - \cmd.exe
+    - \curl.exe
+    - \bitsadmin.exe
+    - \certutil.exe
+  selection_cli:
+    CommandLine|contains:
+    - http://
+    - https://
+    - -w hidden
+    - -windowstyle hidden
+    - iex
+    - Invoke-Expression
+    - downloadstring
+    - '-enc '
+  condition: selection_parent and selection_img and selection_cli
+falsepositives:
+- Users running admin one-liners by hand
+- Helpdesk remote sessions
+level: high

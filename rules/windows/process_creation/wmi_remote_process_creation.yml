@@ -1,0 +1,29 @@
+title: Shell Spawned by WMI Provider Host
+id: 32bbe4a8-8846-5df3-983e-b16d0a107b37
+status: experimental
+description: Detects command interpreters spawned by wmiprvse.exe, a sign of remote execution through
+  WMI.
+author: Hashem H. Hashem
+date: '2026-10-02'
+tags:
+- attack.execution
+- attack.t1047
+- attack.lateral-movement
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith: \wmiprvse.exe
+  selection_child:
+    Image|endswith:
+    - \cmd.exe
+    - \powershell.exe
+    - \pwsh.exe
+    - \rundll32.exe
+    - \mshta.exe
+    - \regsvr32.exe
+  condition: selection_parent and selection_child
+falsepositives:
+- Management software that uses WMI to run commands
+level: medium

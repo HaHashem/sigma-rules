@@ -1,0 +1,4 @@
+pyyaml
+pysigma
+pysigma-backend-splunk
+pysigma-backend-kusto
