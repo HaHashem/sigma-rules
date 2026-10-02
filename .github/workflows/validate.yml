@@ -1,0 +1,15 @@
+name: validate-rules
+on: [push, pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Check required fields, ids and tags
+        run: python tools/validate_rules.py
+      - name: Convert every rule to Splunk and KQL
+        run: python tools/convert_check.py
